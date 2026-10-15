@@ -1,4 +1,5 @@
 ﻿using BLL;
+using BLL.Services;
 using DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,11 @@ namespace RecipeWeb.Controllers
     [ApiController]
     public class RecipesController : ControllerBase
     {
-        private readonly IRecipeRepository _recipeRepository;
+        private readonly IRecipeService irecipeService;
 
-        public RecipesController(IRecipeRepository recipeRepository)
+        public RecipesController(IRecipeService irecipeService)
         {
-            _recipeRepository = recipeRepository;
+            this.irecipeService = irecipeService;
         }
 
         [HttpPost]
@@ -21,7 +22,7 @@ namespace RecipeWeb.Controllers
         {
             try
             {
-                return Ok(_recipeRepository.Add(dto));
+                return Ok(irecipeService.AddRecipe(dto));
             }
             catch (ArgumentException ex)
             {

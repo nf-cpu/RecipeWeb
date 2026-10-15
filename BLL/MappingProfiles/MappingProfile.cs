@@ -9,7 +9,7 @@ namespace BLL
     {
         public MappingProfile()
         {
-            CreateMap<User, UserDTO>();
+            CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<Recipe, RecipeDTO>()
            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<RecipePostDto, Recipe>();
