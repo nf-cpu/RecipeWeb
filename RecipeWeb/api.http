@@ -1,0 +1,15 @@
+@host = https://localhost:7052
+
+### 1. התחברות
+# @name userLogin
+POST {{host}}/api/user/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "12345678"
+}
+
+### 2. בקשה מוגנת
+GET {{host}}/api/recipes
+Authorization: Bearer {{userLogin.response.body.token}}

@@ -7,6 +7,7 @@ namespace BLL.Services
     {
         User? GetByEmail(string email);
         bool EmailExists(string email);
-        void Register(User user);
+        bool Register(RegisterDto dto);
+        AuthResponseDto? Login(LoginDto dto);
     }
 }

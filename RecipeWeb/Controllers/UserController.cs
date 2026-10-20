@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL;
+using BLL.Services;
 using DAL;
 using DTO;
 using Microsoft.AspNetCore.Http;
@@ -11,29 +12,31 @@ namespace RecipeWeb.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private RecipesDB db;
-        private IMapper mappingProfile;
+        private readonly IUserService _userService;
 
-        public UserController(RecipesDB recipesDB, IMapper mappingProfile)
+        public UserController(IUserService userService) => _userService = userService;
+
+        // POST api/user/register
+        [HttpPost("register")]
+        public IActionResult Register(RegisterDto dto)
         {
-            db=recipesDB;
-            this.mappingProfile=mappingProfile;
+            if (!_userService.Register(dto))
+                return Conflict("Email is already registered.");
+
+            // ההרשמה רק יוצרת את המשתמש. את הטוקן מקבלים בהתחברות
+            return Ok();
         }
 
-        [HttpGet]
-       public List<UserDTO> GetUserDTOs()
+        // POST api/user/login
+        [HttpPost("login")]
+        public ActionResult<AuthResponseDto> Login(LoginDto dto)
         {
-            //UserDTO userDTO = new UserDTO();
-            //User user = .First();
+            var result = _userService.Login(dto);
+            if (result is null)
+                return Unauthorized("Wrong email or password.");
 
-            //userDTO.PhoneNumber=user.PhoneNumber;
-            //userDTO.FirstName=user.FirstName;
-
-            //....... 
-
-            return mappingProfile.Map<List<UserDTO>>(db.Users);
-
-            
+            return Ok(result);
         }
     }
 }
+

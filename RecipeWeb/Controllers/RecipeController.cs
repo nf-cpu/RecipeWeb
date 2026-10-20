@@ -1,6 +1,7 @@
 ﻿using BLL;
 using BLL.Services;
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,8 @@ namespace RecipeWeb.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]//מאבטחת את כל הקונטרולר שרק משתמש מחובר יכול לבצע פעולות
+    //משתמש מחובר=יש לו טוקן
     public class RecipesController : ControllerBase
     {
         private readonly IRecipeService irecipeService;
@@ -29,7 +32,11 @@ namespace RecipeWeb.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [HttpGet]
+        public ActionResult<List<RecipeDTO>> GetAll()
+        {
+            return irecipeService.GetAllRecipes();
+        }
        
     }
 }
