@@ -58,9 +58,15 @@ namespace BLL.Services
             return _mapper.Map<RecipeDTO>(existingRecipe);
         }
 
-        public bool DeleteRecipe(int id)
+        public bool DeleteRecipe(int id, int userId)
         {
-            return _recipeRepository.Delete(id);
+            // מחפשים מתכון עם המספר הזה *וגם* של המשתמש המחובר
+            var recipe = _recipeRepository.GetOwned(id, userId);
+            if (recipe is null)
+                return false;   // לא קיים, או לא שלו
+
+            _recipeRepository.Delete(id);
+            return true;
         }
     }
 }

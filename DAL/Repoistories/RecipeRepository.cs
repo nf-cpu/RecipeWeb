@@ -51,5 +51,11 @@ namespace DAL
             _context.SaveChanges();
             return true;
         }
+
+        public Recipe? GetOwned(int id, int userId) =>
+            _context.Recipes.FirstOrDefault(r => r.Id == id && r.UserId == userId);
+
+        public List<Recipe> GetByUser(int userId) =>
+            _context.Recipes.Where(r => r.UserId == userId).ToList();
     }
 }
