@@ -5,8 +5,8 @@ namespace BLL.Services
 {
     public interface IUserService
     {
-        User? GetByEmail(string email);
-        bool EmailExists(string email);
+       // User? GetByEmail(string email);
+       // bool EmailExists(string email);
         void Register(RegisterDto dto);
         AuthResponseDto? Login(LoginDto dto);
     }

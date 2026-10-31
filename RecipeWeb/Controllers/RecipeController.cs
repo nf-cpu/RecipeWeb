@@ -37,5 +37,13 @@ namespace RecipeWeb.Controllers
         {
             return Ok(irecipeService.GetRecipeById(id));
         }
+        [HttpDelete("{id:int}")]
+        public IActionResult Delete(int id)
+        {
+            if (!irecipeService.DeleteRecipe(id, User.GetUserId()))
+                return NotFound();
+
+            return NoContent();
+        }
     }
 }
