@@ -18,6 +18,13 @@ namespace DAL
             public DbSet<Recipe> Recipes { get; set; }
             public DbSet<Category> Categories { get; set; }
 
-       
+                protected override void OnModelCreating(ModelBuilder modelBuilder)
+                {
+                    modelBuilder.Entity<User>()
+                        .HasIndex(user => user.Mail)
+                        .IsUnique();
+
+                    base.OnModelCreating(modelBuilder);
+                }
     }
 }

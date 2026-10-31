@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.Exceptions;
 using DAL;
 using DTO;
 using System.Collections.Generic;
@@ -8,12 +9,18 @@ namespace BLL.Services
     public class RecipeService : IRecipeService
     {
         private readonly IRecipeRepository _recipeRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
         private readonly IImageService _imageService;
 
-        public RecipeService(IRecipeRepository recipeRepository, IMapper mapper, IImageService imageService)
+        public RecipeService(
+            IRecipeRepository recipeRepository,
+            ICategoryRepository categoryRepository,
+            IMapper mapper,
+            IImageService imageService)
         {
             _recipeRepository = recipeRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
             _imageService = imageService;
         }
@@ -24,17 +31,20 @@ namespace BLL.Services
             return _mapper.Map<List<RecipeDTO>>(recipes);
         }
 
-        public RecipeDTO? GetRecipeById(int id)
+        public RecipeDTO GetRecipeById(int id)
         {
             var recipe = _recipeRepository.GetById(id);
             if (recipe == null)
-                return null;
+                throw new NotFoundException($"Recipe with id {id} was not found");
 
             return _mapper.Map<RecipeDTO>(recipe);
         }
 
         public RecipeDTO AddRecipe(RecipePostDto dto)
         {
+            if (!_categoryRepository.Exists(dto.CategoryId))
+                throw new BusinessRuleException("The selected category does not exist");
+
             var recipe = _mapper.Map<Recipe>(dto);
 
             if (dto.ImageFile != null)
@@ -42,7 +52,18 @@ namespace BLL.Services
                 recipe.Image = _imageService.Save(dto.ImageFile);
             }
 
-            _recipeRepository.Add(recipe);
+            try
+            {
+                _recipeRepository.Add(recipe);
+            }
+            catch
+            {
+                if (recipe.Image != null)
+                    _imageService.Delete(recipe.Image);
+
+                throw;
+            }
+
             return _mapper.Map<RecipeDTO>(recipe);
         }
 

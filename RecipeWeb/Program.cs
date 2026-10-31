@@ -3,6 +3,7 @@ using DAL;
 using BLL;
 using Microsoft.Extensions.DependencyInjection;
 using BLL.Services;
+using RecipeWeb.Filters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,10 +41,13 @@ builder.Services.AddAuthorization();
 
 
 var imagesFolder = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath,builder.Configuration["ImagesFolder"]));
-Directory.CreateDirectory(imagesFolder);   // éåöø àú äúé÷ééä àí àéðä ÷ééîú
+Directory.CreateDirectory(imagesFolder);   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 
 // Services
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -59,6 +63,7 @@ builder.Services.AddAutoMapper(cfg =>
 
 //DAL
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // BLL

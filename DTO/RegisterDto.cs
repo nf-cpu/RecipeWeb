@@ -9,10 +9,10 @@ namespace DTO
 {
     public class RegisterDto
     {
-        [Required, EmailAddress]
+        [Required(ErrorMessage = "Email is required"), EmailAddress(ErrorMessage = "Email address is invalid")]
         public string Email { get; set; } = "";
 
-        [Required, MinLength(8)]
+        [Required(ErrorMessage = "Password is required"), MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
         public string Password { get; set; } = "";
     }
 }

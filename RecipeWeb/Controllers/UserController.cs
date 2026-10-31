@@ -20,9 +20,7 @@ namespace RecipeWeb.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterDto dto)
         {
-            if (!_userService.Register(dto))
-                return Conflict("Email is already registered.");
-
+            _userService.Register(dto);
             // ההרשמה רק יוצרת את המשתמש. את הטוקן מקבלים בהתחברות
             return Ok();
         }
@@ -39,4 +37,3 @@ namespace RecipeWeb.Controllers
         }
     }
 }
-

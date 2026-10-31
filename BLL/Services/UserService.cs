@@ -1,5 +1,6 @@
 ﻿using DAL;
 using DTO;
+using BLL.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace BLL.Services
@@ -17,18 +18,17 @@ namespace BLL.Services
             _hasher = hasher;
         }
 
-        public bool Register(RegisterDto dto)
+        public void Register(RegisterDto dto)
         {
             var email = dto.Email.Trim().ToLowerInvariant();
             if (_users.EmailExists(email))
-                return false;
+                throw new ConflictException("Email address is already registered");
 
             // התפקיד נקבע בשרת, לא מגיע מהלקוח
             var user = new User { Mail = email, Role = "User" };
             user.Password = _hasher.HashPassword(user, dto.Password);
 
             _users.Add(user);
-            return true;   // הקונטרולר יחליט מה להחזיר ללקוח
         }
 
         public AuthResponseDto? Login(LoginDto dto)
@@ -43,21 +43,6 @@ namespace BLL.Services
                 return null;
 
             return _tokens.CreateToken(user);
-        }
-
-        public User? GetByEmail(string email)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool EmailExists(string email)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Register(User user)
-        {
-            throw new NotImplementedException();
         }
     }
 }

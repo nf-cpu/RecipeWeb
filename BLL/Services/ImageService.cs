@@ -18,7 +18,9 @@ namespace BLL.Services
 
         public void Delete(string fileName)
         {
-            throw new NotImplementedException();
+            var path = Path.Combine(_folder, fileName);
+            if (File.Exists(path))
+                File.Delete(path);
         }
 
         public string Save(IFormFile file)

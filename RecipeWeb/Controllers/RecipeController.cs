@@ -23,20 +23,19 @@ namespace RecipeWeb.Controllers
         [HttpPost]
         public IActionResult Add([FromForm] RecipePostDto dto)
         {
-            try
-            {
-                return Ok(irecipeService.AddRecipe(dto));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(irecipeService.AddRecipe(dto));
         }
+
         [HttpGet]
         public ActionResult<List<RecipeDTO>> GetAll()
         {
             return irecipeService.GetAllRecipes();
         }
-       
+
+        [HttpGet("{id:int}")]
+        public ActionResult<RecipeDTO> GetById(int id)
+        {
+            return Ok(irecipeService.GetRecipeById(id));
+        }
     }
 }
