@@ -9,8 +9,33 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.AI;
+using OpenAI;
+using System.ClientModel;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+//--------AI Agent
+var apiKey = builder.Configuration["GEMINI:APIKEY"]
+    ?? throw new InvalidOperationException("Gemini:ApiKey is missing");
+
+// הכתובת של Gemini שמדברת בפורמט של OpenAI
+var options = new OpenAIClientOptions
+{
+    Endpoint = new Uri("https://generativelanguage.googleapis.com/v1beta/openai/")
+};
+
+IChatClient innerClient = new OpenAIClient(new ApiKeyCredential(apiKey), options)
+    .GetChatClient("gemini-2.5-flash")
+    .AsIChatClient();
+
+builder.Services.AddChatClient(innerClient)
+    .UseFunctionInvocation();   // מריץ את הכלים שהמודל מבקש
+
+builder.Services.AddScoped<IAgentService, AgentService>();
+
+//-------------JWT
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey))
@@ -74,7 +99,12 @@ builder.Services.AddSingleton<IImageService>(new ImageService(imagesFolder));
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 
 
-
+//-------weatherService
+builder.Services.AddHttpClient<WeatherService>(c =>
+{
+    c.BaseAddress = new Uri("https://api.open-meteo.com/");
+    c.Timeout = TimeSpan.FromSeconds(10);
+});
 
 
 var app = builder.Build();
