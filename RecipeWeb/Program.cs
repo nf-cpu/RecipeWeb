@@ -17,8 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 //--------AI Agent
-var apiKey = builder.Configuration["GEMINI:APIKEY"]
-    ?? throw new InvalidOperationException("Gemini:ApiKey is missing");
+var apiKey = builder.Configuration["GEMINI:APIKEY"];
+    //?? throw new InvalidOperationException("Gemini:ApiKey is missing");
 
 // הכתובת של Gemini שמדברת בפורמט של OpenAI
 var options = new OpenAIClientOptions
@@ -114,11 +114,11 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/images"
 });
 // HTTP pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+ //   app.UseSwaggerUI();
+//}
 
 app.UseHttpsRedirection();
 
